@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
-    public class IBrandManager : IBrandService
+    public class BrandManager : IBrandService
     {
         IBrandDal _brandDal;
 
-        public IBrandManager(IBrandDal brandDal)
+        public BrandManager(IBrandDal brandDal)
         {
             _brandDal = brandDal;
         }
@@ -31,6 +31,11 @@ namespace Business.Concrete
         public List<Brand> GetAll()
         {
             return _brandDal.GetAll();
+        }
+
+        public Brand GetById(int brandId)
+        {
+            return _brandDal.Get(k => k.Id == brandId);
         }
 
         public void Update(Brand brand)
