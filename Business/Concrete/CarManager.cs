@@ -1,4 +1,7 @@
 ﻿using Business.Abstract;
+using Business.Constans;
+using Core.Utilities.Results.Abstract;
+using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -13,18 +16,43 @@ public class CarManager : ICarService
         _carDal = carDal;
     }
 
-    public void Add(Car car)
+    public IResult Add(Car car)
     {
+        if (car.CarName.Length < 2)
+        {
+            return new ErrorResult(Messages.CarNameInvalid);
+        }
+
         _carDal.Add(car);
+        return new SuccessResult(Messages.CarAdded);
     }
 
-    public void Delete(Car car)
+    public IResult Delete(Car car)
     {
+        if (car == null)
+        {
+            return new ErrorResult(Messages.CarNotFound);
+        }
         _carDal.Delete(car);
+        return new SuccessResult(Messages.CarDeleted);
+
     }
-    public void Update(Car car)
+    public IResult Update(Car car)
     {
+        var existingCar = _carDal.Get(c => c.Id == car.Id);
+
+        if (existingCar == null)
+        {
+            return new ErrorResult(Messages.CarNotFound);
+        }
+
+        if (car.CarName.Length < 2)
+        {
+            return new ErrorResult(Messages.CarNameInvalid);
+        }
+
         _carDal.Update(car);
+        return new SuccessResult(Messages.CarUpdated);
     }
 
     public List<Car> GetAll()

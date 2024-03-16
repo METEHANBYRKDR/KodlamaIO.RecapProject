@@ -1,10 +1,15 @@
 ﻿using Business.Abstract;
+using Business.Constans;
+using Core.Utilities.Results.Abstract;
+using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,14 +24,42 @@ namespace Business.Concrete
             _colorDal = colorDal;
         }
 
-        public void Add(Entities.Concrete.Color color)
+        public IResult Add(Entities.Concrete.Color color)
         {
+            if (color.Name.Length < 2)
+            {
+                return new ErrorResult(Messages.ColorNameInvalid);
+            }
+
             _colorDal.Add(color);
+            return new SuccessResult(Messages.ColorAdded);
         }
 
-        public void Delete(Entities.Concrete.Color color)
+        public IResult Delete(Entities.Concrete.Color color)
         {
+            if (color == null)
+            {
+                return new ErrorResult(Messages.ColorNotFound);
+            }
             _colorDal.Delete(color);
+            return new SuccessResult(Messages.ColorDeleted);
+        }
+        public IResult Update(Entities.Concrete.Color color)
+        {
+            var existingColor = _colorDal.Get(c => c.Id == color.Id);
+
+            if (existingColor == null)
+            {
+                return new ErrorResult(Messages.ColorNotFound);
+            }
+
+            if (color.Name.Length < 2)
+            {
+                return new ErrorResult(Messages.ColorNameInvalid);
+            }
+
+            _colorDal.Update(color);
+            return new SuccessResult(Messages.ColorUpdated);
         }
 
         public List<Entities.Concrete.Color> GetAll()
@@ -39,9 +72,5 @@ namespace Business.Concrete
             return _colorDal.Get(k=>k.Id == colorId);
         }
 
-        public void Update(Entities.Concrete.Color color)
-        {
-            _colorDal.Update(color);
-        }
     }
 }

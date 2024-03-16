@@ -1,4 +1,5 @@
-﻿using DataAccess.Abstract;
+﻿using Core.Utilities.Results.Abstract;
+using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using System;
@@ -12,9 +13,9 @@ namespace Business.Abstract
     public interface IColorService
     {
 
-        void Add(Color color);
-        void Update(Color color);
-        void Delete(Color color);
+        IResult Add(Color color);
+        IResult Update(Color color);
+        IResult Delete(Color color);
         List<Color> GetAll();
         Color GetColorById(int colorId);
     }
